@@ -7,7 +7,7 @@ import pandas as pd
 class GeoNet(nn.Module):
 
     def __init__(self,N):
-        super.__init__(self)
+        super(GeoNet,self).__init__()
         fc1 = nn.Linear(2,N)
         self.fc1 = fc1
         self.act1 = torch.sigmoid
@@ -17,25 +17,22 @@ class GeoNet(nn.Module):
         x = self.fc1(x)
         x = self.act1(x)
         x = self.fc2(x)
+        return x
 
 def loss_function(net,df):
 
     loss = 0.0
     t = torch.zeros(2)
 
-    N_fi = np.unique(df['fi'].values).shape[0]
-    N_al = np.unique(df['al'].values).shape[0]
-    vm = df['P_mod'].values
-    vm = vm.reshape(N_fi,N_al)
-
-
-
-    for i,x in enumerate(np.unique(df.values[:,0])):
-        for j,y in enumerate(np.unique(df.values[:,1])):
-            t[0] = x
-            t[1] = y
-            vt = net.forward(t)
-            loss += torch.pow(vt - vm[i][j],2.0)
+    fi = df['fi'].values
+    lb = df['lb'].values
+    v =  df['P_mod'].values
+    for x,y,v in zip(fi,lb,v):
+        t[0] = x
+        t[1] = y
+        vt = net.forward(t)
+        loss += torch.pow(vt - v,2.0)
+    return loss
 
 
 def read_train_set(fname):
@@ -63,8 +60,20 @@ if __name__ == '__main__':
     df = df_user_key_word_org = pd.read_csv("new",
                                    sep="\s+|;|:",
                                    engine="python")
-    N_fi = np.unique(df.values[:, 0]).shape[0]
-    N_al = np.unique(df.values[:, 1]).shape[0]
+    net = GeoNet(10)
+    optimizer = torch.optim.SGD(net.parameters(),lr = 0.01)
+    lf = torch.ones(1)*1e4
+    n = 0
+    while lf.item() > 1.0:
+        optimizer.zero_grad()
+        lf = loss_function(net,df)
+        lf.backward()
+        optimizer.step()
+        print(n,lf.item())
+        n = n+1
+
+
+
 
 
     qq = 0
