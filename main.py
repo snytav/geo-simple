@@ -65,31 +65,35 @@ if __name__ == '__main__':
     crd = np.loadtxt('testgrid.grid')
     N_fi = np.unique(crd[:, 0]).shape[0]
     N_al = np.unique(crd[:,1]).shape[0]
-    df = df_user_key_word_org = pd.read_csv("new",
+    df = df_user_key_word_org = pd.read_csv("short.txt",
                                    sep="\s+|;|:",
                                    engine="python")
     net = GeoNet(10)
-    optimizer = torch.optim.Adam(net.parameters(),lr = 0.5)
+    v = df['P_mod'].values
+    fi = df['fi'].values
+    lb = df['lb'].values
+    t = np.concatenate((fi.reshape(fi.shape[0], 1), lb.reshape(fi.shape[0], 1)), axis=1)
+    t = torch.from_numpy(t)
+    vt = net.forward(t.float())
+    optimizer = torch.optim.Adam(net.parameters(),lr = 0.01)
     lf = torch.ones(1)*1e9
+    v_torch = torch.from_numpy(v)
     n = 0
-    while lf.item() > 1e2:
+    while lf.item() > 1.01:
         optimizer.zero_grad()
-
-        v  = df['P_mod'].values
-        fi = df['fi'].values
-        lb = df['lb'].values
-        t = np.concatenate((fi.reshape(fi.shape[0], 1), lb.reshape(fi.shape[0], 1)), axis=1)
-        t = torch.from_numpy(t)
         vt = net.forward(t.float())
 
-        lf = loss_function(net, df)
-        lf.backward()
+
+        lf = torch.mean(torch.divide(torch.abs(v_torch-vt),torch.abs(v_torch)))
+        lf.backward(retain_graph=True)
         optimizer.step()
 
 
         from sklearn.metrics import mean_absolute_percentage_error,mean_absolute_error
+        #v_torch = torch.from_numpy(v)
         mape = mean_absolute_percentage_error(v,vt.detach().numpy())
         mae = mean_absolute_error(v, vt.detach().numpy())
+
 
 
 
