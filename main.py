@@ -39,7 +39,7 @@ def loss_function(net,df):
         t = torch.tensor([x,y]).float()
         vt = net.forward(t)
         loss += torch.pow(vt - v,2.0)
-    return loss
+    return (loss/df.shape[0])
 
 
 def read_train_set(fname):
@@ -49,6 +49,7 @@ def read_train_set(fname):
     df = pd.DataFrame(data,columns=col_names)
 
     return df
+
 
 
 
@@ -68,15 +69,31 @@ if __name__ == '__main__':
                                    sep="\s+|;|:",
                                    engine="python")
     net = GeoNet(10)
-    optimizer = torch.optim.Adam(net.parameters(),lr = 0.1)
-    lf = torch.ones(1)*1e4
+    optimizer = torch.optim.Adam(net.parameters(),lr = 0.5)
+    lf = torch.ones(1)*1e9
     n = 0
-    while lf.item() > 1.0:
+    while lf.item() > 1e2:
         optimizer.zero_grad()
-        lf = loss_function(net,df)
+
+        v  = df['P_mod'].values
+        fi = df['fi'].values
+        lb = df['lb'].values
+        t = np.concatenate((fi.reshape(fi.shape[0], 1), lb.reshape(fi.shape[0], 1)), axis=1)
+        t = torch.from_numpy(t)
+        vt = net.forward(t.float())
+
+        lf = loss_function(net, df)
         lf.backward()
         optimizer.step()
-        print(n,lf.item())
+
+
+        from sklearn.metrics import mean_absolute_percentage_error,mean_absolute_error
+        mape = mean_absolute_percentage_error(v,vt.detach().numpy())
+        mae = mean_absolute_error(v, vt.detach().numpy())
+
+
+
+        print(n,'{:e}'.format(lf.item()),mape,mae)
         n = n+1
 
 
