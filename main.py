@@ -27,9 +27,16 @@ def loss_function(net,df):
     fi = df['fi'].values
     lb = df['lb'].values
     v =  df['P_mod'].values
+
+    fi = torch.from_numpy(fi)
+    lb = torch.from_numpy(lb)
+    v = torch.from_numpy(v)
+    fi.requires_grad = True
+    lb.requires_grad = True
+    v.requires_grad  = True
+
     for x,y,v in zip(fi,lb,v):
-        t[0] = x
-        t[1] = y
+        t = torch.tensor([x,y]).float()
         vt = net.forward(t)
         loss += torch.pow(vt - v,2.0)
     return loss
@@ -61,7 +68,7 @@ if __name__ == '__main__':
                                    sep="\s+|;|:",
                                    engine="python")
     net = GeoNet(10)
-    optimizer = torch.optim.SGD(net.parameters(),lr = 0.01)
+    optimizer = torch.optim.Adam(net.parameters(),lr = 0.1)
     lf = torch.ones(1)*1e4
     n = 0
     while lf.item() > 1.0:
