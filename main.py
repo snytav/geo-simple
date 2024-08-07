@@ -42,6 +42,15 @@ def loss_function(net,df):
     return (loss/df.shape[0])
 
 
+def MAPE_loss(vt,v_torch):
+    s = 0.0
+    for v1,v2 in zip(vt,v_torch):
+        s += torch.abs(v1-v2)/torch.abs(v2)
+
+    s /= vt.shape[0]
+    return s
+
+
 def read_train_set(fname):
     data = np.loadtxt(fname)
     col_names = 'm,n,ca,r0,sa,r1,K_vbv[n;m],P1'
@@ -65,7 +74,7 @@ if __name__ == '__main__':
     crd = np.loadtxt('testgrid.grid')
     N_fi = np.unique(crd[:, 0]).shape[0]
     N_al = np.unique(crd[:,1]).shape[0]
-    df = df_user_key_word_org = pd.read_csv("short.txt",
+    df = df_user_key_word_org = pd.read_csv("new",
                                    sep="\s+|;|:",
                                    engine="python")
     net = GeoNet(10)
@@ -79,12 +88,14 @@ if __name__ == '__main__':
     lf = torch.ones(1)*1e9
     v_torch = torch.from_numpy(v)
     n = 0
-    while lf.item() > 1.01:
+    while lf.item() > 1.0001:
         optimizer.zero_grad()
         vt = net.forward(t.float())
 
 
-        lf = torch.mean(torch.divide(torch.abs(v_torch-vt),torch.abs(v_torch)))
+        lf = MAPE_loss(vt,v_torch)
+        #torch.mean(torch.divide(torch.abs(v_torch-vt),torch.abs(v_torch))))
+        #lf = loss_function(net,df)
         lf.backward(retain_graph=True)
         optimizer.step()
 
