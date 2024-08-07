@@ -97,6 +97,13 @@ if __name__ == '__main__':
     v2D = v_torch.reshape(N_fi,N_al)
     rhs = poisson2D(v2D)
 
+    from PDE import PDEnet
+    pde  = PDEnet(10,fi,lb,v_torch,True)
+    x = torch.tensor([fi[1],lb[1]])
+    y = pde.forward(x)
+
+
+
     n = 0
     while lf.item() > 1.0001:
         optimizer.zero_grad()
