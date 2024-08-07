@@ -4,6 +4,13 @@ import torch.nn as nn
 import pandas as pd
 
 
+def poisson2D(pd):
+
+    fi = pd[1:-1, 2:] + pd[1:-1, :-2]  + pd[2:, 1:-1] + pd[:-2, 1:-1] - 4.0 * pd[1:-1, 1:-1]
+
+    return fi
+
+
 class GeoNet(nn.Module):
 
     def __init__(self,N):
@@ -87,6 +94,9 @@ if __name__ == '__main__':
     optimizer = torch.optim.Adam(net.parameters(),lr = 0.01)
     lf = torch.ones(1)*1e9
     v_torch = torch.from_numpy(v)
+    v2D = v_torch.reshape(N_fi,N_al)
+    rhs = poisson2D(v2D)
+
     n = 0
     while lf.item() > 1.0001:
         optimizer.zero_grad()
