@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import numpy as np
 
 class PDEnet(nn.Module):
     def __init__(self,N,fi,al,v,draft):
@@ -11,6 +12,13 @@ class PDEnet(nn.Module):
         self.draft = draft
         fc1 = nn.Linear(2,self.N)
         fc2 = nn.Linear(self.N, 1)
+
+    def get_v(self,fi,lb):
+        for f,l,v in zip(self.fi,self.al,self.v):
+            if np.abs(f-fi) < 1e-6 and np.abs(l-lb) < 1e-6:
+                return v
+
+
 
     def forward(self,x):
         if self.draft:
