@@ -8,6 +8,10 @@ class PDEnet(nn.Module):
         self.fi = fi
         self.al = al
         self.v  = v
+        # reshape v to 2D considering N_fi and N_al
+        N_fi = np.unique(self.fi).shape[0]
+        N_al = np.unique(self.al).shape[0]
+        self.v2D = torch.from_numpy(v).reshape(N_fi,N_al)
         self.N  = N
         self.draft = draft
         fc1 = nn.Linear(2,self.N)
