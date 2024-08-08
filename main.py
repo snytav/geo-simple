@@ -101,6 +101,7 @@ if __name__ == '__main__':
     pde  = PDEnet(10,fi,lb,v_torch,True)
     v = pde.get_v(86.25,173.25)
     vp = pde.get_previous(86.25,173.25)
+    vn = pde.get_next(86.25,173.25)
     x = torch.tensor([fi[1],lb[1]])
     y = pde.forward(x)
 
