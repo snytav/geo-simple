@@ -49,7 +49,12 @@ class PDEnet(nn.Module):
 
 
     def laplace1D_numerical(self,fi,lb):
-        return
+        vp = self.get_previous(fi,lb)
+        vn = self.get_next(fi, lb)
+        v = self.get_v(fi,lb)
+        d2x = vp[0] -2.0*v + vn[0]
+        d2y = vn[1] - 2.0*v + vn[1]
+        return [d2x,d2y]
 
 
     def forward(self,x):
