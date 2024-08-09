@@ -98,8 +98,9 @@ if __name__ == '__main__':
     rhs = poisson2D(v2D)
 
     from PDE import PDEnet
-    pde  = PDEnet(10,fi,lb,v_torch,True)
+    pde  = PDEnet(10,fi,lb,v_torch,True,rhs)
     v = pde.get_v(86.25,173.25)
+    i,k = pde.get_ik(86.25,173.25)
     vp = pde.get_previous(86.25,173.25)
     vn = pde.get_next(86.25,173.25)
     x = torch.tensor([fi[1],lb[1]])

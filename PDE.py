@@ -3,13 +3,17 @@ import torch.nn as nn
 import numpy as np
 
 class PDEnet(nn.Module):
-    def __init__(self,N,fi,al,v,draft):
+    def __init__(self,N,fi,al,v,draft,rhs):
         super(PDEnet,self).__init__()
         self.fi = fi
         self.al = al
         self.v  = v
         self.N  = N
         self.draft = draft
+        self.rhs   = rhs
+        N_fi = np.unique(self.fi).shape[0]
+        N_al = np.unique(self.al).shape[0]
+        self.v2D = self.v.reshape(N_al,N_fi).numpy()
         fc1 = nn.Linear(2,self.N)
         fc2 = nn.Linear(self.N, 1)
 
@@ -17,6 +21,12 @@ class PDEnet(nn.Module):
         for f,l,v in zip(self.fi,self.al,self.v):
             if np.abs(f-fi) < 1e-6 and np.abs(l-lb) < 1e-6:
                 return v
+
+    def get_ik(self, fi, lb):
+        for i,f in enumerate(self.fi):
+            for k,l in enumerate(self.al):
+                if np.abs(f - fi) < 1e-6 and np.abs(l - lb) < 1e-6:
+                      return i,k
 
     def get_previous(self,fi,lb):
         fi_uniq = np.unique(self.fi)
