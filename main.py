@@ -79,6 +79,10 @@ def print_hi(name):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
+
+
+
+
     crd = np.loadtxt('testgrid.grid')
     N_fi = np.unique(crd[:, 0]).shape[0]
     N_al = np.unique(crd[:,1]).shape[0]
