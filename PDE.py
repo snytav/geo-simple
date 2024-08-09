@@ -9,13 +9,21 @@ class PDEnet(nn.Module):
         self.al = al
         self.v  = v
         # reshape v to 2D considering N_fi and N_al
-        N_fi = np.unique(self.fi).shape[0]
-        N_al = np.unique(self.al).shape[0]
-        self.v2D = torch.from_numpy(v).reshape(N_fi,N_al)
+        N_tot = self.fi.shape[0] - 1
+        N_al = np.unique(self.al).shape[0] -1
+        N_fi = int(N_tot/N_al)
+        self.v2D = v.reshape(N_fi,N_al)
         self.N  = N
         self.draft = draft
         fc1 = nn.Linear(2,self.N)
         fc2 = nn.Linear(self.N, 1)
+
+    def get_ik(self,fi,lb):
+        for i,f in enumerate(np.unique(self.fi)):
+                for k,l in enumerate(np.unique(self.al)):
+                    if np.abs(f - fi) < 1e-6 and np.abs(l - lb) < 1e-6:
+                       return i,k
+
 
     def get_v(self,fi,lb):
         for f,l,v in zip(self.fi,self.al,self.v):
