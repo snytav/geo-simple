@@ -6,9 +6,10 @@ import pandas as pd
 
 def poisson2D(pd):
 
-    fi = pd[1:-1, 2:] + pd[1:-1, :-2]  + pd[2:, 1:-1] + pd[:-2, 1:-1] - 4.0 * pd[1:-1, 1:-1]
+    d2x = pd[2:, 1:-1] + pd[:-2, 1:-1] - 2.0 * pd[1:-1, 1:-1]
+    d2y = pd[1:-1,2:]  + pd[1:-1,:-2]  - 2.0 * pd[1:-1, 1:-1]
 
-    return fi
+    return d2x,d2y
 
 
 class GeoNet(nn.Module):
@@ -94,17 +95,22 @@ if __name__ == '__main__':
     optimizer = torch.optim.Adam(net.parameters(),lr = 0.01)
     lf = torch.ones(1)*1e9
     v_torch = torch.from_numpy(v)
-    v2D = v_torch.reshape(N_fi,N_al)
-    rhs = poisson2D(v2D)
+    v2D = v_torch.reshape(N_al,N_fi)
+    rhsX,rhsY = poisson2D(v2D)
+
 
     from PDE import PDEnet
-    pde  = PDEnet(10,fi,lb,v_torch,True,rhs)
+    pde  = PDEnet(10,fi,lb,v_torch,True)
+    pde.rhsX = rhsX
+    pde.rhsY = rhsY
     v = pde.get_v(86.25,173.25)
     i,k = pde.get_ik(86.25,173.25)
 
     x = torch.tensor([fi[1],lb[1]])
     y = pde.forward(x)
     lp = pde.laplace1D_numerical(86.25,173.25)
+    pde.laplace_pointwise()
+
 
 
 
