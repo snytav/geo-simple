@@ -14,12 +14,12 @@ class PDEnet(nn.Module):
         N_fi = np.unique(self.fi).shape[0]
         N_al = np.unique(self.al).shape[0]
         self.v2D = self.v.reshape(N_al,N_fi).numpy()
-        self.fi2D = self.fi.reshape(N_al, N_fi).numpy()
-        self.al2D = self.al.reshape(N_al, N_fi).numpy()
+        self.fi2D = self.fi.reshape(N_al, N_fi)
+        self.al2D = self.al.reshape(N_al, N_fi)
         fc1 = nn.Linear(2,self.N)
         fc2 = nn.Linear(self.N, 1)
 
-    def get 
+
 
     def get_v(self,fi,lb):
         for f,l,v in zip(self.fi,self.al,self.v):
@@ -27,47 +27,18 @@ class PDEnet(nn.Module):
                 return v
 
     def get_ik(self, fi, lb):
-        for i,f in enumerate(self.fi):
-            for k,l in enumerate(self.al):
-                if np.abs(f - fi) < 1e-6 and np.abs(l - lb) < 1e-6:
-                      return i,k
-
-    def get_previous(self,fi,lb):
-        fi_uniq = np.unique(self.fi)
-        i = np.where(fi_uniq == fi)
-        i = i[0]
-        fi_prev = fi_uniq[i-1]
-        v_prev_fi = self.get_v(fi_prev,lb)
-
-        lb_uniq = np.unique(self.al)
-        k = np.where(lb_uniq == lb)
-        k = k[0]
-        lb_prev = lb_uniq[k-1]
-        v_prev_lb = self.get_v(fi,lb_prev)
-        return v_prev_fi,v_prev_lb
-
-    def get_next(self,fi,lb):
-        fi_uniq = np.unique(self.fi)
-        i = np.where(fi_uniq == fi)
-        i = i[0]
-        fi_prev = fi_uniq[i+1]
-        v_prev_fi = self.get_v(fi_prev,lb)
-
-        lb_uniq = np.unique(self.al)
-        k = np.where(lb_uniq == lb)
-        k = k[0]
-        lb_prev = lb_uniq[k+1]
-        v_prev_lb = self.get_v(fi,lb_prev)
-        return v_prev_fi,v_prev_lb
+        for (i, k), f in np.ndenumerate(self.fi2D):
+            if np.abs(self.fi2D[i][k] - fi) < 1e-6 and np.abs(self.al2D[i][k] - lb) < 1e-6:
+                i0, k0 = i, k
+        return i0,k0
 
 
 
-    def laplace1D_numerical(self,fi,lb):
-        vp = self.get_previous(fi,lb)
-        vn = self.get_next(fi, lb)
-        v = self.get_v(fi,lb)
-        d2x = vp[0] -2.0*v + vn[0]
-        d2y = vn[1] - 2.0*v + vn[1]
+    def laplace1D_numerical(self,p_fi, p_al):
+        i, k = self.get_ik(p_fi, p_al)
+
+        d2x = self.v2D[i-1][k] -2.0*self.v2D[i][k] + self.v2D[i+1][k]
+        d2y = self.v2D[i][k-1] -2.0*self.v2D[i][k] + self.v2D[i][k+1]
         return [d2x,d2y]
 
 
@@ -75,6 +46,8 @@ class PDEnet(nn.Module):
         if self.draft:
             fi = x[0]
             al = x[1]
+            i,k = self.get_ik(fi,al)
+            return self.v2D[i][k]
 
         x = x.reshape(1, 2)
         y = self.fc1(x)
