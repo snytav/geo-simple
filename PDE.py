@@ -14,8 +14,12 @@ class PDEnet(nn.Module):
         N_fi = np.unique(self.fi).shape[0]
         N_al = np.unique(self.al).shape[0]
         self.v2D = self.v.reshape(N_al,N_fi).numpy()
+        self.fi2D = self.fi.reshape(N_al, N_fi).numpy()
+        self.al2D = self.al.reshape(N_al, N_fi).numpy()
         fc1 = nn.Linear(2,self.N)
         fc2 = nn.Linear(self.N, 1)
+
+    def get 
 
     def get_v(self,fi,lb):
         for f,l,v in zip(self.fi,self.al,self.v):
