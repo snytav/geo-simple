@@ -1,8 +1,11 @@
 import torch
 import torch.nn as nn
 import numpy as np
+from laplace2D import laplace2D
+from PointNet import PointNet,create_point_net_array
 
 class PDEnet(nn.Module):
+
     def __init__(self,N,fi,al,v,draft):
         super(PDEnet,self).__init__()
         self.fi = fi
@@ -13,10 +16,12 @@ class PDEnet(nn.Module):
         N_fi = np.unique(self.fi).shape[0]
         N_al = np.unique(self.al).shape[0]
         self.v2D = self.v.reshape(N_al,N_fi).numpy()
+        self.rhs = laplace2D(self.v2D)
         self.fi2D = self.fi.reshape(N_al, N_fi)
         self.al2D = self.al.reshape(N_al, N_fi)
         fc1 = nn.Linear(2,self.N)
         fc2 = nn.Linear(self.N, 1)
+        self.pn2D = create_point_net_array(self.fi2D,self.al2D,self.rhs,10)
 
 
 

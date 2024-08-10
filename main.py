@@ -2,6 +2,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import pandas as pd
+from laplace2D import laplace2D
 
 
 def poisson2D(pd):
@@ -100,11 +101,12 @@ if __name__ == '__main__':
     lf = torch.ones(1)*1e9
     v_torch = torch.from_numpy(v)
     v2D = v_torch.reshape(N_al,N_fi)
-    rhsX,rhsY = poisson2D(v2D)
+    
 
 
     from PDE import PDEnet
     pde  = PDEnet(10,fi,lb,v_torch,True)
+
     pde.rhsX = rhsX
     pde.rhsY = rhsY
     v = pde.get_v(86.25,173.25)
