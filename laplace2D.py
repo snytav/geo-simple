@@ -8,12 +8,23 @@ def laplace2D(pd):
     d2x = pd[2:, 1:-1] + pd[:-2, 1:-1] - 2.0 * pd[1:-1, 1:-1]
     d2y = pd[1:-1, 2:] + pd[1:-1, :-2] - 2.0 * pd[1:-1, 1:-1]
 
-    f = -(d2x+d2y)
+
+    f_in = -(d2x+d2y)
+    f = np.zeros((f_in.shape[0]+2,f_in.shape[1]+2))
+    f[1:-1,1:-1] = f_in
+    f[1:-1, 0] = f[1:-1, 1]
+    f[0,1:-1]  = f[1,1:-1]
+    f[1:-1, -1] = f[1:-1, -2]
+    f[-1,1:-1] = f[-2,1:-1]
+
+    f_ext = np.zeros((f.shape[0]+2,f.shape[1]+2))
+    f_ext[1:-1,1:-1] = f
+
     return f
 
 
 if __name__ == '__main__':
-    N = 10
+    N = 5
     x = np.linspace(0,1,N)
     y = np.linspace(0,1,N)
 

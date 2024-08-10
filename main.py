@@ -101,14 +101,13 @@ if __name__ == '__main__':
     lf = torch.ones(1)*1e9
     v_torch = torch.from_numpy(v)
     v2D = v_torch.reshape(N_al,N_fi)
-    
+
 
 
     from PDE import PDEnet
     pde  = PDEnet(10,fi,lb,v_torch,True)
 
-    pde.rhsX = rhsX
-    pde.rhsY = rhsY
+
     v = pde.get_v(86.25,173.25)
     i,k = pde.get_ik(86.25,173.25)
 

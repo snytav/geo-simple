@@ -39,7 +39,7 @@ def create_point_net_array(fi2D,al2D,rhs2D,N):
         ml = nn.ModuleList(list_along_k)
         module_list.append(ml)
 
-    ml2d = nn.ModuleList(ml)
+    ml2d = nn.ModuleList(module_list)
 
     return ml2d
 
