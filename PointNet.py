@@ -9,33 +9,37 @@ class PointNet(nn.Module):
          self.fi  = fi
          self.al  = al
          self.rhs = rhs
-         fc1 = nn.Linear(1,N)
+         fc1 = nn.Linear(2,N)
          self.fc1 = fc1
          self.fc2 = nn.Linear(N,1)
 
     def forward(self):
         x = torch.tensor([self.fi,self.al])
+        x = x.float()
         x = self.fc1(x)
-        x = torch.nn.Sigmoid(x)
+        x = torch.sigmoid(x)
         x = self.fc2(x)
         return x
 
     def loss(self):
         y = self.forward()
         t = torch.abs(y-self.rhs)
-        return
+        return t
 
     def train(self):
-        optim = torch.optim.SGD(self.parameters(),lr=0.01)
-        lr = torch.ones(1)*1.0e3
-        while lr.item() > 1e-2:
+        optim = torch.optim.Adam(self.parameters(),lr=0.01)
+        n = 0
+        lf = torch.ones(1)*1.0e3
+        while lf.item() > 1e-2:
             optim.zero_grad()
             lf = self.loss()
             lf.backward()
             optim.step()
+            #print(n,lf.item())
+            n =  n+1
 
         qq = 0
-        return lr.item()
+        return lf.item()
 
 
 def create_point_net_array(fi2D,al2D,rhs2D,N):

@@ -68,3 +68,13 @@ class PDEnet(nn.Module):
         y = self.fc2(y.reshape(1, self.N))
         return y
 
+    def train_points(self):
+        Ni,Nk = self.fi2D.shape
+        learn_map = np.zeros((Ni,Nk))
+        for i in range(Ni):
+            for k in range(Nk):
+                pn = self.pn2D[i][k]
+                t = pn.train()
+                learn_map[i][k] = t
+
+        qq = 0

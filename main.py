@@ -106,6 +106,7 @@ if __name__ == '__main__':
 
     from PDE import PDEnet
     pde  = PDEnet(10,fi,lb,v_torch,True)
+    pde.train_points()
 
 
     v = pde.get_v(86.25,173.25)
