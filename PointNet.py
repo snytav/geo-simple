@@ -23,7 +23,20 @@ class PointNet(nn.Module):
     def loss(self):
         y = self.forward()
         t = torch.abs(y-self.rhs)
-        return t
+        return
+
+    def train(self):
+        optim = torch.optim.SGD(self.parameters(),lr=0.01)
+        lr = torch.ones(1)*1.0e3
+        while lr.item() > 1e-2:
+            optim.zero_grad()
+            lf = self.loss()
+            lf.backward()
+            optim.step()
+
+        qq = 0
+        return lr.item()
+
 
 def create_point_net_array(fi2D,al2D,rhs2D,N):
     Ni,Nk = fi2D.shape
