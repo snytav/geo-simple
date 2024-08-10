@@ -1,0 +1,7 @@
+   3.1 first based on evaluated RHS
+   3.2 then based on some more general formulation probably based on harmonics
+   3.3 this more general formulation take from Pascal code
+   3.3a or maybe make a fully connected or convolutional layer to take harmonics into 
+        account 
+4. Make a table or errors on points (3 regions mentioned by IG...)
+5. 
