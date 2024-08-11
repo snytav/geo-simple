@@ -3,6 +3,19 @@ import torch.nn as nn
 import numpy as np
 from laplace2D import laplace2D
 from PointNet import PointNet,create_point_net_array
+import pandas as pd
+
+def make_small_debug_file(fi2D,al2D,v2D):
+    fi2D_10  = fi2D[:10,:10]
+    al2D_10  = al2D[:10, :10]
+    v2D_10   = v2D[:10, :10]
+    val = np.zeros((100,3))
+    val[:,0] = fi2D_10.reshape(100)
+    val[:,1] = al2D_10.reshape(100)
+    val[:,2] = v2D_10.reshape(100)
+
+    df = pd.DataFrame(val, columns=['fi', 'lb', 'P_mod'])
+    df.to_csv('10.csv',sep=' ')
 
 class PDEnet(nn.Module):
 
@@ -19,6 +32,9 @@ class PDEnet(nn.Module):
         self.rhs = laplace2D(self.v2D)
         self.fi2D = self.fi.reshape(N_al, N_fi)
         self.al2D = self.al.reshape(N_al, N_fi)
+
+        make_small_debug_file(self.fi2D, self.al2D, self.v2D)
+
         fc1 = nn.Linear(2,self.N)
         fc2 = nn.Linear(self.N, 1)
         self.pn2D = create_point_net_array(self.fi2D,self.al2D,self.rhs,10)
@@ -76,5 +92,7 @@ class PDEnet(nn.Module):
                 pn = self.pn2D[i][k]
                 t = pn.train()
                 learn_map[i][k] = t
+                print(i,k)
 
+        np.savetxt('learn_map.txt',learn_map.reshape(Ni*Nk),fmt='%15.5e')
         qq = 0
