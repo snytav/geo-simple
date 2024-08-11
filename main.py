@@ -87,20 +87,20 @@ if __name__ == '__main__':
     crd = np.loadtxt('testgrid.grid')
     N_fi = np.unique(crd[:, 0]).shape[0]
     N_al = np.unique(crd[:,1]).shape[0]
-    df = df_user_key_word_org = pd.read_csv("new",
+    df = df_user_key_word_org = pd.read_csv("10.csv",
                                    sep="\s+|;|:",
                                    engine="python")
-    net = GeoNet(10)
+    # net = GeoNet(10)
     v = df['P_mod'].values
     fi = df['fi'].values
     lb = df['lb'].values
-    t = np.concatenate((fi.reshape(fi.shape[0], 1), lb.reshape(fi.shape[0], 1)), axis=1)
-    t = torch.from_numpy(t)
-    vt = net.forward(t.float())
-    optimizer = torch.optim.Adam(net.parameters(),lr = 0.01)
-    lf = torch.ones(1)*1e9
+    # t = np.concatenate((fi.reshape(fi.shape[0], 1), lb.reshape(fi.shape[0], 1)), axis=1)
+    # t = torch.from_numpy(t)
+    # vt = net.forward(t.float())
+    # optimizer = torch.optim.Adam(net.parameters(),lr = 0.01)
+    # lf = torch.ones(1)*1e9
     v_torch = torch.from_numpy(v)
-    v2D = v_torch.reshape(N_al,N_fi)
+    # v2D = v_torch.reshape(N_al,N_fi)
 
 
 
