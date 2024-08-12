@@ -14,11 +14,16 @@ def make_small_debug_file(fi2D,al2D,v2D):
     val[:,1] = al2D_10.reshape(100)
     val[:,2] = v2D_10.reshape(100)
 
-    df = pd.DataFrame(val, columns=['fi', 'lb', 'P_mod'])
-    df.to_csv('10.csv',sep=' ')
+    # df = pd.DataFrame(val, columns=['fi', 'lb', 'P_mod'])
+    # df.to_csv('10.csv',sep=' ')
+    return fi2D_10,al2D_10,v2D_10,True
 
 class PDEnet(nn.Module):
-
+    def make_small_debug_version(fi2D, al2D, v2D):
+        fi2D_10 = fi2D[:10, :10]
+        al2D_10 = al2D[:10, :10]
+        v2D_10 = v2D[:10, :10]
+        return fi2D_10,al2D_10,v2D_10,True
     def __init__(self,N,fi,al,v,draft):
         super(PDEnet,self).__init__()
         self.fi = fi
@@ -33,7 +38,13 @@ class PDEnet(nn.Module):
         self.fi2D = self.fi.reshape(N_al, N_fi)
         self.al2D = self.al.reshape(N_al, N_fi)
 
-        make_small_debug_file(self.fi2D, self.al2D, self.v2D)
+        #temporarily reduce size for debug purpose
+        self.fi2D,self.al2D,self.v2D,self.debug_mode = make_small_debug_file(self.fi2D,self.al2D,self.v2D)
+        qq = 0
+
+
+
+
 
         fc1 = nn.Linear(2,self.N)
         fc2 = nn.Linear(self.N, 1)
@@ -87,8 +98,8 @@ class PDEnet(nn.Module):
     def train_points(self):
         Ni,Nk = self.fi2D.shape
         learn_map = np.zeros((Ni,Nk))
-        for i in range(20): #Ni):
-            for k in range(20): #Nk):
+        for i in range(Ni):
+            for k in range(Nk):
                 pn = self.pn2D[i][k]
                 t = pn.train()
                 learn_map[i][k] = t

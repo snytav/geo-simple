@@ -87,7 +87,7 @@ if __name__ == '__main__':
     crd = np.loadtxt('testgrid.grid')
     N_fi = np.unique(crd[:, 0]).shape[0]
     N_al = np.unique(crd[:,1]).shape[0]
-    df = df_user_key_word_org = pd.read_csv("10.csv",
+    df = df_user_key_word_org = pd.read_csv("new",
                                    sep="\s+|;|:",
                                    engine="python")
     # net = GeoNet(10)
