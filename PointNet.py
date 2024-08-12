@@ -1,6 +1,7 @@
 import numpy as np
 import torch
 import torch.nn as nn
+from torch.autograd.functional import jacobian,hessian
 
 
 class PointNet(nn.Module):
@@ -13,16 +14,23 @@ class PointNet(nn.Module):
          self.fc1 = fc1
          self.fc2 = nn.Linear(N,1)
 
-    def forward(self):
-        x = torch.tensor([self.fi,self.al])
-        x = x.float()
+    def forward(self,x):
+        # x = torch.tensor([self.fi,self.al])
+        # x = x.float()
         x = self.fc1(x)
         x = torch.sigmoid(x)
         x = self.fc2(x)
         return x
 
     def loss(self):
-        y = self.forward()
+        x = torch.tensor([self.fi, self.al])
+        x = x.float()
+
+        y = self.forward(x)
+        inputs = x
+        jacobian(self.forward, inputs, create_graph=True)
+        hess = hessian(self.forward, inputs)
+        t_pois = torch.pow(torch.pow(hess[0][0],2)+torch.pow(hess[1][1],2) - self.rhs,2.0)
         t = torch.abs(y-self.rhs)
         return t
 
