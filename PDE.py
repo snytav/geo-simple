@@ -6,18 +6,7 @@ from PointNet import PointNet,create_point_net_array
 import pandas as pd
 from torch.autograd.functional import jacobian,hessian
 
-def loss(pde):
 
-    Ni,Nk = pde.fi2D.shape
-    lf = 0.0
-    for i in range(Ni):
-        for k in range(Nk):
-            from diff import loss_pointwise
-            fi = pde.fi2D[i][k]
-            al = pde.al2D[i][k]
-            t_pois = loss_pointwise(pde,fi,al,i,k)
-            lf += t_pois
-    return lf
 
 def make_small_debug_file(fi2D,al2D,v2D):
     fi2D_10  = fi2D[:10,:10]
@@ -33,6 +22,8 @@ def make_small_debug_file(fi2D,al2D,v2D):
     return fi2D_10,al2D_10,v2D_10,True
 
 class PDEnet(nn.Module):
+    from diff import A,psy_trial,psy_trial1,psy_trial2,loss_pointwise
+    from diff import loss,f_Lx,f_Ly,f_x_0,f_y_0
     def make_small_debug_version(fi2D, al2D, v2D):
         fi2D_10 = fi2D[:10, :10]
         al2D_10 = al2D[:10, :10]
@@ -85,7 +76,7 @@ class PDEnet(nn.Module):
         lf = torch.ones(1) * 1.0e3
         while lf.item() > 1:
               optim.zero_grad()
-              lf = loss(self)
+              lf = self.loss()
               lf.backward()
               optim.step()
               # print(n,lf.item())
@@ -109,6 +100,9 @@ class PDEnet(nn.Module):
             p2x,p2y = self.laplace1D_numerical(p,a)
             rhsX_p[i-1][k-1] = p2x
             rhsY_p[i-1][k-1] = p2y
+
+    def f(self, i, k):
+        return self.v2D[i][k]
 
     def forward(self,x):
         x = self.fc1(x)
