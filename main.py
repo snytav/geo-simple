@@ -104,8 +104,10 @@ if __name__ == '__main__':
 
 
 
-    from PDE import PDEnet
+    from PDE import PDEnet,loss
     pde  = PDEnet(10,fi,lb,v_torch,True)
+    lf = loss(pde)
+    pde.train()
     pde.train_points()
 
 

@@ -25,17 +25,18 @@ class PointNet(nn.Module):
     def loss(self):
         x = torch.tensor([self.fi, self.al])
         x = x.float()
+        x.requires_grad = True
 
         y = self.forward(x)
         inputs = x
         jacobian(self.forward, inputs, create_graph=True)
-        hess = hessian(self.forward, inputs)
+        hess = hessian(self.forward, inputs, create_graph=True)
         t_pois = torch.pow(torch.pow(hess[0][0],2)+torch.pow(hess[1][1],2) - self.rhs,2.0)
-        t = torch.abs(y-self.rhs)
-        return t
+
+        return t_pois
 
     def train(self):
-        optim = torch.optim.Adam(self.parameters(),lr=0.01)
+        optim = torch.optim.Adam(self.parameters(),lr=0.1)
         n = 0
         lf = torch.ones(1)*1.0e3
         while lf.item() > 1e-2:
