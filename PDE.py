@@ -23,7 +23,7 @@ def make_small_debug_file(fi2D,al2D,v2D):
 
 class PDEnet(nn.Module):
     from diff import A,psy_trial,psy_trial1,psy_trial2,loss_pointwise
-    from diff import loss,f_Lx,f_Ly,f_x_0,f_y_0
+    from diff import loss,f_Lx,f_Ly,f_x_0,f_y_0,set_boundary_values
     def make_small_debug_version(fi2D, al2D, v2D):
         fi2D_10 = fi2D[:10, :10]
         al2D_10 = al2D[:10, :10]
@@ -45,6 +45,7 @@ class PDEnet(nn.Module):
 
         #temporarily reduce size for debug purpose
         self.fi2D,self.al2D,self.v2D,self.debug_mode = make_small_debug_file(self.fi2D,self.al2D,self.v2D)
+        self.set_boundary_values()
         qq = 0
 
 
