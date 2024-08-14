@@ -22,7 +22,7 @@ def make_small_debug_file(fi2D,al2D,v2D):
     return fi2D_10,al2D_10,v2D_10,True
 
 class PDEnet(nn.Module):
-    from diff import A,psy_trial,psy_trial1,psy_trial2,loss_pointwise
+    from diff import Ax,Ay,A,psy_trial,psy_trial1,psy_trial2,loss_pointwise
     from diff import loss,f_Lx,f_Ly,f_x_0,f_y_0,set_boundary_values
     def make_small_debug_version(fi2D, al2D, v2D):
         fi2D_10 = fi2D[:10, :10]

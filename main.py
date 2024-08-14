@@ -114,7 +114,7 @@ if __name__ == '__main__':
     b1 = pde.f_x_0(x)
 
     x = torch.ones(2,requires_grad=True)
-    y = pde.A(x,pde.forward(x))
+    y = pde.A(x)#,pde.forward(x))
     lf = pde.loss()
     pde.train()
     pde.train_points()
