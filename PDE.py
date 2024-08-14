@@ -80,7 +80,7 @@ class PDEnet(nn.Module):
               lf = self.loss()
               lf.backward()
               optim.step()
-              # print(n,lf.item())
+              print(n,lf.item())
               n = n + 1
 
         qq = 0
