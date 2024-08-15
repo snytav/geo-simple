@@ -75,15 +75,16 @@ class PDEnet(nn.Module):
     def train(self):
         optim = torch.optim.Adam(self.parameters(), lr=0.01)
         n = 0
-        lf = torch.ones(1) * 1.0e3
-        while lf.item() > 1:
+        lf = torch.ones(1) * 1.0e11
+        while lf.item() > 1.6e4:
               optim.zero_grad()
               lf = self.loss()
               lf.backward()
               optim.step()
-              print(n,lf.item())
+              print(n,'{:15.5e}'.format(lf.item()))
               n = n + 1
 
+        mape = self.MAPE()
         qq = 0
 
         
