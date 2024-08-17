@@ -46,6 +46,9 @@ class PDEnet(nn.Module):
         self.fi2D = self.fi.reshape(N_al, N_fi)
         self.al2D = self.al.reshape(N_al, N_fi)
 
+        self.Lx = np.max(self.fi2D)
+        self.Ly = np.max(self.al2D)
+
         #temporarily reduce size for debug purpose
         from harmonics import make_small_debug_file
         self.fi2D, self.al2D, self.v2D, self.rhs, self.debug_mode = make_small_debug_file(self.fi2D, self.al2D,
@@ -85,7 +88,11 @@ class PDEnet(nn.Module):
         return i0,k0
 
     def train(self):
-        optim = torch.optim.Adam([self.parameters(),self.hnn.parameters()], lr=0.01)
+
+        params = list(self.parameters()) + list(self.hnn.parameters())
+
+
+        optim = torch.optim.Adam(params, lr=0.01)
         n = 0
         lf = torch.ones(1) * 1.0e11
         while lf.item() > 1.6e4:
