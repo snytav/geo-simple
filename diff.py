@@ -103,6 +103,7 @@ def loss(self):
     al2D = torch.from_numpy(self.al2D)
     al2D.requires_grad = True
 
+    self.rhs = self.hnn.forward(self.hnn.koef).reshape(self.rhs.shape[0],self.rhs.shape[1])
 
     Ni,Nk = self.fi2D.shape
     lf = 0.0

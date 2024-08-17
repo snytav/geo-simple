@@ -106,15 +106,15 @@ if __name__ == '__main__':
 
     from PDE import PDEnet
     pde  = PDEnet(10,fi,lb,v_torch,True)
-    b = pde.f_Ly(189.0)
-
-    x = torch.ones(1) * 189.0
-    b2 = pde.f_y_0(x)
-    x = torch.ones(1) * 89.25
-    b1 = pde.f_x_0(x)
-
-    x = torch.ones(2,requires_grad=True)
-    y = pde.A(x)#,pde.forward(x))
+    # b = pde.f_Ly(189.0)
+    #
+    # x = torch.ones(1) * 189.0
+    # b2 = pde.f_y_0(x)
+    # x = torch.ones(1) * 89.25
+    # b1 = pde.f_x_0(x)
+    #
+    # x = torch.ones(2,requires_grad=True)
+    # y = pde.A(x)#,pde.forward(x))
     lf = pde.loss()
     pde.train()
     pde.train_points()

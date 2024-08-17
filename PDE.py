@@ -8,18 +8,20 @@ from torch.autograd.functional import jacobian,hessian
 
 
 
-def make_small_debug_file(fi2D,al2D,v2D):
-    fi2D_10  = fi2D[:10,:10]
-    al2D_10  = al2D[:10, :10]
-    v2D_10   = v2D[:10, :10]
-    val = np.zeros((100,3))
-    val[:,0] = fi2D_10.reshape(100)
-    val[:,1] = al2D_10.reshape(100)
-    val[:,2] = v2D_10.reshape(100)
+# def make_small_debug_file(fi2D,al2D,v2D,rhs2D):
+#     fi2D_10  = fi2D[:10,:10]
+#     al2D_10  = al2D[:10, :10]
+#     v2D_10   = v2D[:10, :10]
+#     rhs2D_10 = rhs2D[:10, :10]
+#     val = np.zeros((100,3))
+#     val[:,0] = fi2D_10.reshape(100)
+#     val[:,1] = al2D_10.reshape(100)
+#     val[:,2] = v2D_10.reshape(100)
+#     return fi2D_10, al2D_10, v2D_10,rhs2D_10, True
 
     # df = pd.DataFrame(val, columns=['fi', 'lb', 'P_mod'])
     # df.to_csv('10.csv',sep=' ')
-    return fi2D_10,al2D_10,v2D_10,True
+#    return fi2D_10,al2D_10,v2D_10,True
 
 class PDEnet(nn.Module):
     from diff import Ax,Ay,A,psy_trial,psy_trial1,psy_trial2,loss_pointwise
@@ -45,8 +47,18 @@ class PDEnet(nn.Module):
         self.al2D = self.al.reshape(N_al, N_fi)
 
         #temporarily reduce size for debug purpose
-        self.fi2D,self.al2D,self.v2D,self.debug_mode = make_small_debug_file(self.fi2D,self.al2D,self.v2D)
-        self.set_boundary_values()
+        from harmonics import make_small_debug_file
+        self.fi2D, self.al2D, self.v2D, self.rhs, self.debug_mode = make_small_debug_file(self.fi2D, self.al2D,
+                                                                                          self.v2D, self.rhs)
+
+        from harmonics import HarmNet
+        from read_harmonics import read_gfc
+        koef = read_gfc()
+        hnn = HarmNet(10, fi, al, v, koef)
+        self.hnn = hnn
+
+        #self.set_boundary_values(
+
         qq = 0
 
 
@@ -73,7 +85,7 @@ class PDEnet(nn.Module):
         return i0,k0
 
     def train(self):
-        optim = torch.optim.Adam(self.parameters(), lr=0.01)
+        optim = torch.optim.Adam([self.parameters(),self.hnn.parameters()], lr=0.01)
         n = 0
         lf = torch.ones(1) * 1.0e11
         while lf.item() > 1.6e4:
