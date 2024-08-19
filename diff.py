@@ -96,8 +96,8 @@ def loss_pointwise(self,xi,yi,i,k):
     #loss_sum += err_sqr
 
     return err_sqr
-
-def loss(self):
+# global values - just for diagnostic output
+def loss(self,global_n,global_lf):
     fi2D = torch.from_numpy(self.fi2D)
     fi2D.requires_grad = True
     al2D = torch.from_numpy(self.al2D)
@@ -114,4 +114,5 @@ def loss(self):
             al = al2D[i][k]
             t_pois = self.loss_pointwise(fi,al,i,k)
             lf += t_pois
+            print('n ',global_n,'loss ',i,k,'{:25.15e}'.format(lf.item()),'{:25.15e}'.format(global_lf.item()) )
     return lf

@@ -72,7 +72,7 @@ class PDEnet(nn.Module):
         fc2 = nn.Linear(self.N, 1)
         self.fc1 = fc1
         self.fc2 = fc2
-        self.pn2D = create_point_net_array(self.fi2D,self.al2D,self.rhs,10)
+        #self.pn2D = create_point_net_array(self.fi2D,self.al2D,self.rhs,10)
 
 
 
@@ -95,9 +95,9 @@ class PDEnet(nn.Module):
         optim = torch.optim.Adam(params, lr=0.01)
         n = 0
         lf = torch.ones(1) * 1.0e11
-        while lf.item() > 1.6e4:
+        while lf.item() > 1.6e9:
               optim.zero_grad()
-              lf = self.loss()
+              lf = self.loss(n,lf)
               lf.backward()
               optim.step()
               print(n,'{:15.5e}'.format(lf.item()))
