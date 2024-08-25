@@ -106,6 +106,8 @@ if __name__ == '__main__':
 
     from PDE import PDEnet
     pde  = PDEnet(10,fi,lb,v_torch,True)
+    DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
     # b = pde.f_Ly(189.0)
     #
     # x = torch.ones(1) * 189.0
