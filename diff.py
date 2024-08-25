@@ -114,5 +114,5 @@ def loss(self,global_n,global_lf):
             al = al2D[i][k]
             t_pois = self.loss_pointwise(fi,al,i,k)
             lf += t_pois
-            print('n ',global_n,'loss ',i,k,'{:25.15e}'.format(lf.item()),'{:25.15e}'.format(global_lf.item()) )
+           # print('n ',global_n,'loss ',i,k,'{:25.15e}'.format(lf.item()),'{:25.15e}'.format(global_lf.item()) )
     return lf
