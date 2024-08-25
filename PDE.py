@@ -94,13 +94,14 @@ class PDEnet(nn.Module):
 
         optim = torch.optim.Adam(params, lr=0.01)
         n = 0
-        lf = torch.ones(1) * 1.0e11
-        while lf.item() > 1.6e9:
+        lf0 = 1e13
+        lf = torch.ones(1) * lf0
+        while lf.item()/lf0 > 1.0e-2:
               optim.zero_grad()
               lf = self.loss(n,lf)
               lf.backward()
               optim.step()
-              print(n,'{:15.5e}'.format(lf.item()))
+              print(n,'{:15.5e}'.format(lf.item()/lf0))
               n = n + 1
 
         mape = self.MAPE()
