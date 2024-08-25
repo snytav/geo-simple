@@ -66,7 +66,7 @@ def psy_trial2(self,x, net_out):
 
 
 def loss_pointwise(self,xi,yi,i,k):
-    input_point = torch.tensor([xi, yi])
+    input_point = torch.tensor([xi, yi]).cuda()
     input_point = input_point.float()
     input_point.requires_grad = True
     net_out = self.forward(input_point)[0]
@@ -98,10 +98,10 @@ def loss_pointwise(self,xi,yi,i,k):
     return err_sqr
 # global values - just for diagnostic output
 def loss(self,global_n,global_lf):
-    fi2D = torch.from_numpy(self.fi2D)
-    fi2D.requires_grad = True
-    al2D = torch.from_numpy(self.al2D)
-    al2D.requires_grad = True
+    #fi2D = torch.from_numpy(self.fi2D)
+    self.fi2D.requires_grad = True
+    #al2D = torch.from_numpy(self.al2D)
+    self.al2D.requires_grad = True
 
     self.rhs = self.hnn.forward(self.hnn.koef).reshape(self.rhs.shape[0],self.rhs.shape[1])
 
@@ -110,8 +110,8 @@ def loss(self,global_n,global_lf):
     for i in range(Ni):
         for k in range(Nk):
             from diff import loss_pointwise
-            fi = fi2D[i][k]
-            al = al2D[i][k]
+            fi = self.fi2D[i][k]
+            al = self.al2D[i][k]
             t_pois = self.loss_pointwise(fi,al,i,k)
             lf += t_pois
            # print('n ',global_n,'loss ',i,k,'{:25.15e}'.format(lf.item()),'{:25.15e}'.format(global_lf.item()) )

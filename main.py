@@ -107,7 +107,11 @@ if __name__ == '__main__':
     from PDE import PDEnet
     pde  = PDEnet(10,fi,lb,v_torch,True)
     DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
+    pde.hnn.koef = pde.hnn.koef.to('cuda')
+    pde.hnn = pde.hnn.to('cuda')
+    pde.fi2D = torch.from_numpy(pde.fi2D).to('cuda')
+    pde.al2D = torch.from_numpy(pde.al2D).to('cuda')
+    pde     = pde.to('cuda')
     # b = pde.f_Ly(189.0)
     #
     # x = torch.ones(1) * 189.0
