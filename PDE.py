@@ -95,7 +95,7 @@ class PDEnet(nn.Module):
 
         optim = torch.optim.Adam(params, lr=0.01)
         n = 0
-        lf0 = 1e13
+        lf0 = 1e15
         lf = torch.ones(1) * lf0
         while lf.item()/lf0 > 1.0e-2:
               optim.zero_grad()
