@@ -11,9 +11,9 @@ def MAPE(self):
         for k in range(Nk):
             fi = self.fi2D[i][k]
             al = self.al2D[i][k]
-            t = torch.Tensor([fi,al])
+            t = torch.Tensor([fi,al]).cuda()
             y = self.forward(t)
-            v_tilde[i][k] = y.detach().numpy()
+            v_tilde[i][k] = y.cpu().detach().numpy()
 
 
     self.pointwise_MAPE = np.divide(np.abs(self.v2D-v_tilde),np.abs(self.v2D))

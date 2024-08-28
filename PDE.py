@@ -82,8 +82,9 @@ class PDEnet(nn.Module):
                 return v
 
     def get_ik(self, fi, lb):
-        for (i, k), f in np.ndenumerate(self.fi2D):
-            if np.abs(self.fi2D[i][k] - fi) < 1e-6 and np.abs(self.al2D[i][k] - lb) < 1e-6:
+        i0,k0 = 0,0
+        for (i, k), f in np.ndenumerate(self.fi2D.cpu().detach().numpy()):
+            if np.abs(self.fi2D.cpu().detach().numpy()[i][k] - fi) < 1e-6 and np.abs(self.al2D.cpu().detach().numpy()[i][k] - lb) < 1e-6:
                 i0, k0 = i, k
         return i0,k0
 

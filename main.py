@@ -123,7 +123,9 @@ if __name__ == '__main__':
     # y = pde.A(x)#,pde.forward(x))
    # lf = pde.loss()
     pde.train()
-    pde.train_points()
+    import sys
+    sys.exit()
+    # pde.train_points()
 
 
     v = pde.get_v(86.25,173.25)
