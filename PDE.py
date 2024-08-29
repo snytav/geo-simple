@@ -93,19 +93,28 @@ class PDEnet(nn.Module):
         params = list(self.parameters()) + list(self.hnn.parameters())
 
 
-        optim = torch.optim.Adam(params, lr=0.1)
+        optim = torch.optim.Adam(params, lr=0.01)
         n = 0
         lf0 = 1e15
+        hist = []
         lf = torch.ones(1) * lf0
-        while lf.item()/lf0 > 1.0e-2:
+        while lf.item()/lf0 > 0.5:
               optim.zero_grad()
               lf = self.loss(n,lf)
               lf.backward()
               optim.step()
+              hist.append(lf.item()/lf0)
               print(n,'{:15.5e}'.format(lf.item()/lf0))
               n = n + 1
 
         mape = self.MAPE()
+        hist = np.array(hist)
+        import matplotlib.pyplot as plt
+        plt.plot(hist, marker='o', linestyle='solid')
+        plt.title('Neural network training')
+        plt.ylabel('loss function')
+        plt.xlabel('number of epoch')
+        plt.show(block=True)
         qq = 0
 
         
