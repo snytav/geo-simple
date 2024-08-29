@@ -93,7 +93,7 @@ class PDEnet(nn.Module):
         params = list(self.parameters()) + list(self.hnn.parameters())
 
 
-        optim = torch.optim.Adam(params, lr=0.01)
+        optim = torch.optim.Adam(params, lr=0.1)
         n = 0
         lf0 = 1e15
         lf = torch.ones(1) * lf0

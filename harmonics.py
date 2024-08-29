@@ -6,15 +6,15 @@ import pandas as pd
 from laplace2D import laplace2D
 
 def make_small_debug_file(fi2D,al2D,v2D,rhs2D):
-    return fi2D, al2D, v2D, rhs2D, True
-    fi2D_10  = fi2D[:10,:10]
-    al2D_10  = al2D[:10, :10]
-    v2D_10   = v2D[:10, :10]
-    rhs2D_10 = rhs2D[:10, :10]
-    val = np.zeros((100,3))
-    val[:,0] = fi2D_10.reshape(100)
-    val[:,1] = al2D_10.reshape(100)
-    val[:,2] = v2D_10.reshape(100)
+    # return fi2D, al2D, v2D, rhs2D, True
+    fi2D_10  = fi2D[:20,:20]
+    al2D_10  = al2D[:20, :20]
+    v2D_10   = v2D[:20, :20]
+    rhs2D_10 = rhs2D[:20, :20]
+    val = np.zeros((400,3))
+    val[:,0] = fi2D_10.reshape(400)
+    val[:,1] = al2D_10.reshape(400)
+    val[:,2] = v2D_10.reshape(400)
     return fi2D_10, al2D_10, v2D_10,rhs2D_10, True
 
 class HarmNet(nn.Module):
