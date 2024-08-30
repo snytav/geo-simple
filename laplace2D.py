@@ -27,6 +27,13 @@ def laplace2D(pd):
 
     return f
 
+def smooth2D(pd):
+    res = pd.copy()
+    d2x = pd[2:, 1:-1] + pd[:-2, 1:-1]
+    d2y = pd[1:-1, 2:] + pd[1:-1, :-2]
+
+    res[1:-1,1:-1] = (d2x+d2y)/4.0
+    return res
 
 if __name__ == '__main__':
     N = 5
