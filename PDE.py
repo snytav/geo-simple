@@ -48,6 +48,14 @@ class PDEnet(nn.Module):
 
         self.Lx = np.max(self.fi2D)
         self.Ly = np.max(self.al2D)
+        from surface import plot_density_surface
+        fic = np.unique(self.fi)
+        alc = np.unique(self.al)
+        df = fic[1] - fic[0]
+        af = alc[1] - alc[0]
+        plot_density_surface(self.v2D,self.v2D.shape,[df,af],'phi exact')
+        # https://stackoverflow.com/questions/33259896/python-interpolation-2d-array-for-huge-arrays
+
 
         #temporarily reduce size for debug purpose
         from harmonics import make_small_debug_file
