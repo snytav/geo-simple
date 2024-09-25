@@ -146,6 +146,7 @@ if __name__ == '__main__':
 
 
         lf = MAPE_loss(vt,v_torch)
+
         #torch.mean(torch.divide(torch.abs(v_torch-vt),torch.abs(v_torch))))
         #lf = loss_function(net,df)
         lf.backward(retain_graph=True)

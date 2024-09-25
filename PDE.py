@@ -26,7 +26,7 @@ from torch.autograd.functional import jacobian,hessian
 class PDEnet(nn.Module):
     from diff import Ax,Ay,A,psy_trial,psy_trial1,psy_trial2,loss_pointwise
     from diff import loss,f_Lx,f_Ly,f_x_0,f_y_0,set_boundary_values
-    from relative_errors import MAPE
+    from relative_errors import MAPE,get_v_tilde,print_result
     def make_small_debug_version(fi2D, al2D, v2D):
         fi2D_10 = fi2D[:10, :10]
         al2D_10 = al2D[:10, :10]
@@ -95,10 +95,10 @@ class PDEnet(nn.Module):
 
         optim = torch.optim.Adam(params, lr=0.01)
         n = 0
-        lf0 = 1e15
+        lf0 = 1e13
         hist = []
         lf = torch.ones(1) * lf0
-        while lf.item()/lf0 > 0.5:
+        while lf.item()/lf0 > 1e-2:
               optim.zero_grad()
               lf = self.loss(n,lf)
               lf.backward()
@@ -108,13 +108,14 @@ class PDEnet(nn.Module):
               n = n + 1
 
         mape = self.MAPE()
+        self.print_result('phi.txt')
         hist = np.array(hist)
-        import matplotlib.pyplot as plt
-        plt.plot(hist, marker='o', linestyle='solid')
-        plt.title('Neural network training')
-        plt.ylabel('loss function')
-        plt.xlabel('number of epoch')
-        plt.show(block=True)
+        # import matplotlib.pyplot as plt
+        # plt.plot(hist, marker='o', linestyle='solid')
+        # plt.title('Neural network training')
+        # plt.ylabel('loss function')
+        # plt.xlabel('number of epoch')
+        # plt.show(block=True)
         qq = 0
 
         
