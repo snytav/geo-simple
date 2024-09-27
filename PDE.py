@@ -25,21 +25,7 @@ from torch.autograd.functional import jacobian,hessian
     # df.to_csv('10.csv',sep=' ')
 #    return fi2D_10,al2D_10,v2D_10,True
 
-def interpolate(u,N,fi2D,al2D):
-# https://numpy.org/devdocs/reference/generated/numpy.interp.html
 
-    from scipy import interpolate
-    f = interpolate.interp2d(fi2D, al2D, u, kind='cubic')
-    # use linspace so your new range also goes from 0 to 3, with 8 intervals
-    xmin = np.min(fi2D)
-    xmax = np.max(fi2D)
-    ymin = np.min(al2D)
-    ymax = np.max(al2D)
-    Xnew = np.linspace(xmin, xmax, N)
-    Ynew = np.linspace(ymin, ymax, N)
-
-    u1 = f(Xnew, Ynew)
-    return u1
 
 class PDEnet(nn.Module):
     from diff import Ax,Ay,A,psy_trial,psy_trial1,psy_trial2,loss_pointwise
@@ -71,8 +57,9 @@ class PDEnet(nn.Module):
         alc = np.unique(self.al)
         df = fic[1] - fic[0]
         af = alc[1] - alc[0]
-        plot_density_surface(self.v2D,self.v2D.shape,[df,af],'phi exact')
+        #plot_density_surface(self.v2D,self.v2D.shape,[df,af],'phi exact')
         # https://stackoverflow.com/questions/33259896/python-interpolation-2d-array-for-huge-arrays
+        from interpolate import interpolate
         u1 = interpolate(self.v2D, 10,self.fi2D,self.al2D)
 
         #temporarily reduce size for debug purpose
