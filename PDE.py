@@ -61,6 +61,7 @@ class PDEnet(nn.Module):
         # https://stackoverflow.com/questions/33259896/python-interpolation-2d-array-for-huge-arrays
         from interpolate import interpolate
         u1 = interpolate(self.v2D, 10,self.fi2D,self.al2D)
+        plot_density_surface(u1, u1.shape, [36.0, 18.0], 'phi interpolated')
 
         #temporarily reduce size for debug purpose
         from harmonics import make_small_debug_file

@@ -46,7 +46,7 @@ def interpolate(u,N,fi2D,al2D):
         qq = 0
 
 
-    return 0
+    return u2
 
 # https://numpy.org/devdocs/reference/generated/numpy.interp.html
 
@@ -62,3 +62,19 @@ def interpolate(u,N,fi2D,al2D):
 
     u1 = f(Xnew, Ynew)
     return u1
+    # https://www.askpython.com/python-modules/numpy/bilinear-interpolation-python
+
+    import numpy as np
+    from scipy.interpolate import griddata
+    points = np.array([[0, 0], [0, 1], [1, 0], [1, 1], [2, 1], [2, 2], [1, 2], [0, 2]])
+    x = fi2D[:, 0]
+    x = np.unique(x)
+    y = al2D[:, 0]
+    y = np.unique(y)
+    X,Y = np.meshgrid(x,y)
+
+    values = np.array([1, 4, 7, 9, 3, 8, 2, 7])
+    x = 0.5
+    y = 0.5
+    interpolated_value = griddata(points, values, (x, y), method='nearest')
+    print("Interpolated value at ({x}, {y}): {interpolated_value}")
