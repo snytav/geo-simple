@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import interp2d, RectBivariateSpline
 
 
-def plot(f, xnew, ynew):
+def plot(f, xnew, ynew,x,z):
    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8, 4))
    znew = f(xnew, ynew)
    ax1.plot(x, z[0, :], 'ro-', xnew, znew[0, :], 'b-')
@@ -13,12 +13,14 @@ def plot(f, xnew, ynew):
    return znew
 
 def interpolate(fi,al,v,N):
-    x = fi
-    y = al
+    x = np.unique(fi)
+    y = np.unique(al)
     xx, yy = np.meshgrid(x, y)
     z = v
     f = interp2d(x, y, z, kind='cubic')
 
     xnew = np.linspace(np.min(x), np.max(x), N)
     ynew = np.linspace(np.min(y), np.max(y), N)
-    znew_i = plot(f, xnew, ynew)
+    znew_i = plot(f, xnew, ynew,x,z)
+    qq = 0
+    return znew_i

@@ -60,7 +60,8 @@ class PDEnet(nn.Module):
         #plot_density_surface(self.v2D,self.v2D.shape,[df,af],'phi exact')
         # https://stackoverflow.com/questions/33259896/python-interpolation-2d-array-for-huge-arrays
         from interpolate import interpolate
-        u1 = interpolate(self.v2D, 10,self.fi2D,self.al2D)
+        # (fi,al,v,N)
+        u1 = interpolate(self.fi2D,self.al2D,self.v2D, 10)
         plot_density_surface(u1, u1.shape, [36.0, 18.0], 'phi interpolated')
 
         #temporarily reduce size for debug purpose
